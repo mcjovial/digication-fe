@@ -4,14 +4,15 @@ import { useDrag, useDragDropManager } from 'react-dnd';
 import { useRafLoop } from 'react-use';
 
 import ModuleInterface from '../types/ModuleInterface';
-import { moduleW2LocalWidth, moduleX2LocalX, moduleY2LocalY } from '../helpers';
+import { localX2ModuleX, moduleW2LocalWidth, moduleX2LocalX, moduleY2LocalY } from '../helpers';
 
 type ModuleProps = {
   data: ModuleInterface;
+  moveModule: (module: ModuleInterface) => void;
 };
 
 const Module = (props: ModuleProps) => {
-  const { data: { id, coord: { x, y, w, h } } } = props;
+  const { data: { id, coord: { x, y, w, h } }, moveModule } = props;
 
   // Transform x, y to left, top
   const [{ top, left }, setPosition] = React.useState(() => ({
@@ -34,6 +35,11 @@ const Module = (props: ModuleProps) => {
     setPosition({
       top: initialPosition.current.top + movement.y,
       left: initialPosition.current.left + movement.x,
+    });
+
+    moveModule({
+      id,
+      coord: { x: localX2ModuleX(left), y: top, w, h },
     });
   }, false);
 
