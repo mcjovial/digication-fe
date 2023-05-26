@@ -45,7 +45,7 @@ export const isOutOfBounds = (placeholder: PlaceholderInterface, containerHeight
  */
 export const newPlaceholderTop = (initialPosition: number, offset: number): number => {
   let val = initialPosition + Math.round(offset / GUTTER_SIZE) * GUTTER_SIZE;
-  if (val < 0) val = GUTTER_SIZE;
+  if (val <= 0) val = GUTTER_SIZE;
   return val;
 };
 
