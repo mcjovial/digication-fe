@@ -4,25 +4,41 @@ import { useDrag, useDragDropManager } from 'react-dnd';
 import { useRafLoop } from 'react-use';
 
 import ModuleInterface from '../types/ModuleInterface';
-import { isOutOfBounds, localX2ModuleX, localY2ModuleY, moduleW2LocalWidth, moduleX2LocalX, moduleY2LocalY, newPlaceholderHeight, newPlaceholderLeft, newPlaceholderTop, newPlaceholderWidth } from '../helpers';
+import { isModuleColliding, isOutOfBounds, localX2ModuleX, localY2ModuleY, moduleHWithGutter, moduleW2LocalWidth, moduleWWithGutter, moduleX2LocalX, moduleY2LocalY, moduleYWithGutter, newPlaceholderHeight, newPlaceholderLeft, newPlaceholderTop, newPlaceholderWidth } from '../helpers';
 import PlaceholderInterface from '../types/PlaceholderInterface';
 
 type ModuleProps = {
   data: ModuleInterface;
   moveModule: (module: ModuleInterface) => void;
   containerHeight: number;
+  modules: ModuleInterface[]
 };
 
 const Module = (props: ModuleProps) => {
-  const { data: { id, coord: { x, y, w, h } }, moveModule, containerHeight } = props;
+  const { data: { id, coord: { x, y, w, h } }, moveModule, containerHeight, modules } = props;
 
   const isValidMove = React.useCallback((placeholder: PlaceholderInterface) => {
     // Check if the placeholder is within the grid boundaries
     if (isOutOfBounds(placeholder, containerHeight)) {
       return false;
     }
+    // Check for collisions and prevent overlapping between modules
+    for (const module of modules) {
+      // Exclude the moving module
+      if (module.id == id) continue;
+
+      const { coord } = module;
+
+      const moduleToCheck: PlaceholderInterface = {
+        top: moduleYWithGutter(coord.y),
+        left: moduleX2LocalX(coord.x),
+        height: moduleHWithGutter(coord.y, coord.h),
+        width: moduleWWithGutter(coord.x, coord.w),
+      };
+      if (isModuleColliding(moduleToCheck, placeholder)) return false;
+    }
     return true;
-  }, [containerHeight, id, h, w]);
+  }, [containerHeight, id, h, w, modules]);
   
   // Transform x, y to left, top
   const [{ top, left }, setPosition] = React.useState(() => ({
@@ -48,8 +64,6 @@ const Module = (props: ModuleProps) => {
       height: newPlaceholderHeight(initialPosition.current.top, movement.y, h),
       width: newPlaceholderWidth(initialPosition.current.left, movement.x, w),
     };
-
-    console.log('check', initialPosition.current.top + movement.y, placeholder.top, localY2ModuleY(placeholder.top));
     
     if (isValidMove(placeholder)) {
       // Update new position of the module
