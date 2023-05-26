@@ -47,7 +47,7 @@ const Page = () => {
     >
       <Grid height={containerHeight} />
       {modules.map((module) => (
-        <Module key={module.id} data={module} moveModule={handleModuleMovement} />
+        <Module key={module.id} data={module} moveModule={handleModuleMovement} containerHeight={containerHeight} />
       ))}
     </Box>
   );
