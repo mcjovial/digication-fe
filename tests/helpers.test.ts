@@ -1,5 +1,18 @@
 import { COLUMN_WIDTH, GUTTER_SIZE } from '../src/constants';
-import { localX2ModuleX, localY2ModuleY, moduleHWithGutter, moduleW2LocalWidth, moduleWWithGutter, moduleX2LocalX, moduleY2LocalY, moduleYWithGutter, newPlaceholderHeight, newPlaceholderLeft, newPlaceholderTop, newPlaceholderWidth } from '../src/helpers';
+import {
+  localX2ModuleX,
+  localY2ModuleY,
+  moduleHWithGutter,
+  moduleW2LocalWidth,
+  moduleWWithGutter,
+  moduleX2LocalX,
+  moduleY2LocalY,
+  moduleYWithGutter,
+  newPlaceholderHeight,
+  newPlaceholderLeft,
+  newPlaceholderTop,
+  newPlaceholderWidth,
+} from '../src/helpers';
 
 describe('helpers', () => {
   test('moduleW2LocalWidth', () => {
@@ -44,9 +57,11 @@ describe('helpers', () => {
     const initialPosition = 30;
     const offset = 20;
     const width = 20;
-    expect(newPlaceholderWidth(initialPosition, offset, width)).toEqual(newPlaceholderLeft(initialPosition, offset) + moduleW2LocalWidth(width));
+    expect(newPlaceholderWidth(initialPosition, offset, width)).toEqual(
+      newPlaceholderLeft(initialPosition, offset) + moduleW2LocalWidth(width),
+    );
   });
-  
+
   test('moduleYWithGutter', () => {
     const Y = 30;
     expect(moduleYWithGutter(Y)).toEqual(moduleY2LocalY(Y) - GUTTER_SIZE / 2);
